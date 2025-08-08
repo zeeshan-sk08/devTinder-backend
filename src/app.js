@@ -1,20 +1,21 @@
 const express = require("express");
 
 const app = express();
-const { adminAuth, userAuth } = require("./middleware/auth");
 
-app.use("/admin", adminAuth);
-
-app.get("/user", userAuth, (req, res) => {
-  res.send("User data is fetched!");
+app.get("/user", (req, res) => {
+    try{
+        throw new Error("ASdasdasd");
+        res.send("User data is fetched!");
+    } catch (err){
+        res.status(500).send("Internal Server Error");
+    }
+  
 });
 
-app.get("/admin/getAllData", (req, res) => {
-  res.send("All data is fetched!");
-});
-
-app.delete("/admin/deleteData", (req, res) => {
-  res.send("Data has been deleted!");
+app.use("/", (err, req, res, next) => {
+  if (err) {
+    res.status(500).send("something went wrong!");
+  }
 });
 
 app.listen(3000, () => {
