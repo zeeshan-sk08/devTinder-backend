@@ -4,19 +4,84 @@ const app = express();
 const connectDB = require("./config/database");
 const User = require("./models/user");
 
+app.use(express.json());
+
 app.post("/signup", async (req, res) => {
-  const user = new User({
-    firstName: "Zeeshan",
-    lastName: "Shaikh",
-    emailId: "zeeshan@123.com",
-    password: "zeeshan123",
-  });
+  const user = new User(req.body);
 
   try {
     await user.save();
     res.send("User added sucessfully!");
   } catch (err) {
     res.status(400).send("Error adding user:" + err.message);
+  }
+});
+
+//Get user by email id
+app.get("/user", async (req, res) => {
+  const emailId = req.body.emailId;
+
+  try {
+    const users = await User.find({ emailId: emailId });
+
+    if (users.length === 0) {
+      res.status(404).send("User not found!");
+    } else {
+      res.send(users);
+    }
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
+//Feed API
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.send(users);
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
+//Delete user by ID
+app.delete("/user", async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    await User.findByIdAndDelete(userId);
+    res.send("User deleted successfully!");
+  } catch (err) {
+    res.status(400).send("Something went wrong");
+  }
+});
+
+//Update the user
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  const data = req.body;
+
+  try {
+    const allowedUpdate = ["gender", "age", "skills", "about", "photo"];
+    const keys = Object.keys(data);
+
+    const isAllowedUpdate = keys.every((k) => allowedUpdate.includes(k));
+
+    if (!isAllowedUpdate) {
+      throw new Error("Invalid update operation!");
+    }
+
+    if (data.skills.length > 10) {
+      throw new Error("Skills cannot be more than 10!");
+    }
+
+    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "before",
+      runValidators: true,
+    });
+
+    res.send("User updated successfully!");
+  } catch (err) {
+    res.status(400).send("Something went wrong," + err.message);
   }
 });
 
