@@ -65,6 +65,8 @@ const userScheme = new mongoose.Schema(
   { timestamps: true }
 );
 
+userScheme.index({ firstName: 1 });
+
 userScheme.methods.getJWT = async function () {
   const user = this;
   const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$786", {
@@ -76,7 +78,10 @@ userScheme.methods.getJWT = async function () {
 
 userScheme.methods.validatePassword = async function (passwordInputByUser) {
   const user = this;
-  const isPasswordValid = await bcrypt.compare(passwordInputByUser, user.password);
+  const isPasswordValid = await bcrypt.compare(
+    passwordInputByUser,
+    user.password
+  );
 
   return isPasswordValid;
 };

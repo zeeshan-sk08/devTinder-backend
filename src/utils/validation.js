@@ -11,4 +11,22 @@ const validateSignUpData = (data) => {
   }
 };
 
-module.exports = { validateSignUpData };
+const validateEditProfileData = (data) => {
+  const isAllowedFields = [
+    "firstName",
+    "lastName",
+    "age",
+    "gender",
+    "about",
+    "photo",
+    "skills",
+  ];
+
+  const isAllowed = Object.keys(data).every((key) =>
+    isAllowedFields.includes(key)
+  );
+
+  return isAllowed;
+};
+
+module.exports = { validateSignUpData, validateEditProfileData };
