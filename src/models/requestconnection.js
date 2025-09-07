@@ -5,6 +5,7 @@ const requestConnectionSchema = new mongoose.Schema(
     fromUserId: {
       type: String,
       required: true,
+      ref: "User",
     },
     toUserId: {
       type: String,
