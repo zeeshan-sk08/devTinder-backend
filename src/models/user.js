@@ -57,6 +57,8 @@ const userScheme = new mongoose.Schema(
           throw new Error("Photo URL is not valid!");
         }
       },
+      default:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvxJY8zzNz0lnMMIBkUOmwYc1QexW18zIp5g&s",
     },
     skills: {
       type: [String],

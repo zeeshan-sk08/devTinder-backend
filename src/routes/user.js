@@ -75,7 +75,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    res.json({ data: usersFeed });
+    res.send(usersFeed);
   } catch (err) {
     res.status(400).send("Error: " + err.message);
   }

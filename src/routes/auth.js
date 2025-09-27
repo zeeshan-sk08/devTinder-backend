@@ -20,16 +20,22 @@ authRouter.post("/signup", async (req, res) => {
       emailId,
       password: passwordHash,
     });
-    await user.save();
-    res.send("User added sucessfully!");
+    const newUser = await user.save();
+
+    const token = await newUser.getJWT();
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 7 * 24 * 3600000),
+    });
+
+    res.send({ message: "User added sucessfully!", data: newUser });
   } catch (err) {
     res.status(400).send("Error: " + err.message);
   }
 });
 
-authRouter.get("/login", async (req, res) => {
+authRouter.post("/login", async (req, res) => {
   try {
-    const { emailId, password } = req.body;
+    const { emailId, password } = req.body.data;
 
     const user = await User.findOne({ emailId: emailId });
     if (!user) {
@@ -44,7 +50,7 @@ authRouter.get("/login", async (req, res) => {
       res.cookie("token", token, {
         expires: new Date(Date.now() + 7 * 24 * 3600000),
       });
-      res.send("Login successfully!");
+      res.send(user);
     } else {
       throw new Error("Invalid credentials!");
     }
@@ -53,7 +59,7 @@ authRouter.get("/login", async (req, res) => {
   }
 });
 
-authRouter.post("/logout", async(req, res) => {
+authRouter.post("/logout", async (req, res) => {
   res
     .cookie("token", null, { expires: new Date(Date.now()) })
     .send("Logged out successfully!");
