@@ -6,7 +6,12 @@ const cors = require("cors");
 const app = express();
 const connectDB = require("./config/database");
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://13.234.110.213"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
