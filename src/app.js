@@ -8,7 +8,7 @@ const connectDB = require("./config/database");
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://13.234.110.213"],
+    origin: "*",
     credentials: true,
   })
 );
